@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Android.Content;
 using SafeMessages.Helpers;
 using SafeMessages.Services;
 using Xamarin.Forms;
@@ -53,8 +54,17 @@ namespace SafeMessages.ViewModels {
         IsUiEnabled = false;
         AuthProgressMessage = "Requesting Authentication.";
         var url = await SafeApp.GenerateAppRequestAsync();
-        Device.BeginInvokeOnMainThread(() => { Device.OpenUri(new Uri(url)); });
-      } catch (Exception ex) {
+        Device.BeginInvokeOnMainThread(async() => {
+            try { Device.OpenUri(new Uri(url)); }
+            catch (ActivityNotFoundException)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Please install MaidSafe Authenticator to proceed ", "OK");
+                AuthProgressMessage = string.Empty;
+                IsUiEnabled = true;
+            }
+        });
+
+            } catch (Exception ex) {
         await Application.Current.MainPage.DisplayAlert("Error", $"Generate App Request Failed: {ex.Message}", "OK");
       }
     }

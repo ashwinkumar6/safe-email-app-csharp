@@ -22,4 +22,10 @@
     <ProjectReference Include="..\..\CommonUtils\CommonUtils\CommonUtils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ZxcvbnLib">
+      <HintPath>C:\Users\Ashwin\source\repos\ZxcvbnLib\ZxcvbnLib\bin\Release\ZxcvbnLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using CommonUtils;
 using SafeAuthenticator.Helpers;
+using SafeAuthenticator.Services;
 using SafeAuthenticator.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -8,10 +13,18 @@ using Xamarin.Forms.Xaml;
 namespace SafeAuthenticator.Views {
   [XamlCompilation(XamlCompilationOptions.Compile)]
   public partial class LoginPage : ContentPage, ICleanup {
-    public LoginPage() {
-      InitializeComponent();
 
-      MessagingCenter.Subscribe<LoginViewModel>(
+        protected AuthService Authenticator => DependencyService.Get<AuthService>();
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            MessagingCenter.Send(this,"AutoReconnectOnStartup");
+        }
+
+        public LoginPage() {
+      InitializeComponent(); 
+            BindingContext = new LoginViewModel();
+            MessagingCenter.Subscribe<LoginViewModel>(
         this,
         MessengerConstants.NavHomePage,
         async sender => {
@@ -20,7 +33,6 @@ namespace SafeAuthenticator.Views {
             return;
           }
           Debug.WriteLine("LoginPage -> HomePage");
-
           Navigation.InsertPageBefore(new HomePage(), this);
           await Navigation.PopAsync();
         });

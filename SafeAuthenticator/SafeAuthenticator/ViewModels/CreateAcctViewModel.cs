@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using SafeAuthenticator.Helpers;
+using SafeAuthenticator.Helpers;            
 using Xamarin.Forms;
 
 namespace SafeAuthenticator.ViewModels {
@@ -12,14 +12,58 @@ namespace SafeAuthenticator.ViewModels {
 
     public string AcctPassword { get => _acctPassword; set => SetProperty(ref _acctPassword, value); }
 
-    public string AcctSecret { get => _acctSecret; set => SetProperty(ref _acctSecret, value); }
-    public string Invitation { get => _invitation; set => SetProperty(ref _invitation, value); }
+        // public string AcctSecret { get => _acctSecret; set => SetProperty(ref _acctSecret, value); }
 
+       public string AcctSecret
+        {
+            get{ return _acctSecret;}
+            set { SetProperty(ref _acctSecret, value); OnPropertyChanged(); }
+        }
+
+        public string Invitation { get => _invitation; set => SetProperty(ref _invitation, value); }
     public ICommand CreateAcctCommand { get; }
-
     public bool IsUiEnabled { get => _isUiEnabled; set => SetProperty(ref _isUiEnabled, value); }
 
-    public bool AuthReconnect {
+        public double SecretStrengthIndicator {
+            get { return Authenticator.LoginStrength(AcctSecret).Item1; }
+            set
+            {
+                SecretStrengthIndicator = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SecretStrengthText
+        {
+            get { return Authenticator.LoginStrength(AcctSecret).Item2; }
+            set
+            {
+                SecretStrengthText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double PasswordStrengthIndicator
+        {
+            get { return Authenticator.LoginStrength(AcctPassword).Item1; }
+            set
+            {
+                PasswordStrengthIndicator = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string PasswordStrengthText
+        {
+            get { return Authenticator.LoginStrength(AcctPassword).Item2; }
+            set
+            {
+                PasswordStrengthText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool AuthReconnect {
       get => Authenticator.AuthReconnect;
       set {
         if (Authenticator.AuthReconnect != value) {
@@ -58,3 +102,5 @@ namespace SafeAuthenticator.ViewModels {
     }
   }
 }
+
+

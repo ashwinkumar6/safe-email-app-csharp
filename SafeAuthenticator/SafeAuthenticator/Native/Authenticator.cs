@@ -183,17 +183,19 @@ namespace SafeAuthenticator.Native {
           var tcs = new TaskCompletionSource<Authenticator>();
           Action disconnect = () => { OnDisconnected(authenticator); };
           Action<FfiResult, IntPtr, GCHandle> cb = (result, ptr, disconnectHandle) => {
-            if (result.ErrorCode != 0) {
-              if (disconnectHandle.IsAllocated) {
-                disconnectHandle.Free();
+              if (result.ErrorCode != 0)
+              {
+                  if (disconnectHandle.IsAllocated)
+                  {
+                      disconnectHandle.Free();
+                  }
+
+                  tcs.SetException(result.ToException());
+                  return;
               }
 
-              tcs.SetException(result.ToException());
-              return;
-            }
-
-            authenticator.Init(ptr, disconnectHandle);
-            tcs.SetResult(authenticator);
+              authenticator.Init(ptr, disconnectHandle);
+             tcs.SetResult(authenticator);
           };
           AuthBindings.Login(locator, secret, disconnect, cb);
           return tcs.Task;

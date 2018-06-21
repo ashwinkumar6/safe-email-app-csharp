@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CommonUtils;
 using SafeAuthenticator.Helpers;
 using SafeAuthenticator.Models;
+using SafeAuthenticator.Services;
 using Xamarin.Forms;
 
 namespace SafeAuthenticator.ViewModels {
@@ -16,6 +17,7 @@ namespace SafeAuthenticator.ViewModels {
     public ICommand RefreshAccountsCommand { get; }
     public ICommand AccountSelectedCommand { get; }
     public string AccountStorageInfo { get => _accountStorageInfo; set => SetProperty(ref _accountStorageInfo, value); }
+    CredentialCacheService cache;
 
     public HomeViewModel() {
       IsRefreshing = false;
@@ -33,6 +35,9 @@ namespace SafeAuthenticator.ViewModels {
 
     private async void OnLogout() {
       await Authenticator.LogoutAsync();
+      //Delete the cache when logged out 
+      cache = new CredentialCacheService();
+      cache.Delete();      
       MessagingCenter.Send(this, MessengerConstants.NavLoginPage);
     }
 

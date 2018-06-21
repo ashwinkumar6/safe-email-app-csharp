@@ -24,47 +24,79 @@
                            Grid.Column="0" />
                     <Switch IsToggled="{Binding AuthReconnect}" Grid.Column="1" />
                 </Grid>
-                <Grid Margin="20,5,20,5" HeightRequest="{StaticResource EntryHeightRequest}">
+               
+                <Grid Margin="20,5,20,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{StaticResource PasswordEntryColDefinition1}" />
                         <ColumnDefinition Width="1" />
                         <ColumnDefinition Width="{StaticResource PasswordEntryColDefinition3}" />
                     </Grid.ColumnDefinitions>
                     <commonUtils:PaddedEntry x:Name="SecretEntry" Placeholder="Secret"
-                                             Grid.Column="0"
+                                             Grid.Row="0" Grid.Column="0" 
                                              Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}"
                                              Text="{Binding AcctSecret}" IsEnabled="{Binding IsUiEnabled}" />
-                    <Image VerticalOptions="Center" Grid.Column="{StaticResource PasswordEntryImageColumn}"
+
+                    <Image VerticalOptions="Center" Grid.Row="0" Grid.Column="{StaticResource PasswordEntryImageColumn}"
                            Aspect="AspectFit"
                            Margin="{StaticResource PasswordEntryImageMargin}" HeightRequest="25">
                         <Image.Behaviors>
                             <commonUtils:PasswordImageBehavior InputEntry="{x:Reference SecretEntry}" />
                         </Image.Behaviors>
                     </Image>
+
+                    <ProgressBar HeightRequest="3" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}"
+                                 Progress="{Binding SecretStrengthIndicator}" Margin="4,-30,0,-4"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}" 
+                           HorizontalOptions="Start" FontSize="Micro" Text="{Binding SecretStrengthText}" FontAttributes="Bold" TextColor="{StaticResource ButtonNormal}" Margin="4,-15,0,0"/>
+
                     <StackLayout Grid.Column="1" BackgroundColor="{StaticResource PasswordEntrySeperatorColor}"
                                  VerticalOptions="Fill" HorizontalOptions="Fill" />
                 </Grid>
-                <Grid Margin="20,5,20,5" HeightRequest="{StaticResource EntryHeightRequest}">
+                
+                <Grid Margin="20,5,20,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{StaticResource PasswordEntryColDefinition1}" />
                         <ColumnDefinition Width="1" />
                         <ColumnDefinition Width="{StaticResource PasswordEntryColDefinition3}" />
                     </Grid.ColumnDefinitions>
                     <commonUtils:PaddedEntry x:Name="PasswordEntry" Placeholder="Password"
-                                             Grid.Column="0"
+                                             Grid.Row="0" Grid.Column="0" 
                                              Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}"
-                                             Text="{Binding AcctPassword}" IsEnabled="{Binding IsUiEnabled}" />
-                    <Image VerticalOptions="Center" Grid.Column="{StaticResource PasswordEntryImageColumn}"
+                                             Text="{Binding AcctPassword}" IsEnabled="{Binding IsUiEnabled}"
+                                              />
+                    <Image VerticalOptions="Center" Grid.Row="0" Grid.Column="{StaticResource PasswordEntryImageColumn}"
                            Aspect="AspectFit"
                            Margin="{StaticResource PasswordEntryImageMargin}" HeightRequest="25">
                         <Image.Behaviors>
                             <commonUtils:PasswordImageBehavior InputEntry="{x:Reference PasswordEntry}" />
                         </Image.Behaviors>
                     </Image>
+
+                    <ProgressBar HeightRequest="3" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}"
+                                 Progress="{Binding PasswordStrengthIndicator}" Margin="4,-30,0,-4"/>
+                    
+                    <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="{StaticResource PasswordEntryColumnSpan}" 
+                           HorizontalOptions="Start" FontSize="Micro" Text="{Binding PasswordStrengthText}" FontAttributes="Bold" TextColor="{StaticResource ButtonNormal}" Margin="4,-15,0,0"/>
+
                     <StackLayout Grid.Column="1" BackgroundColor="{StaticResource PasswordEntrySeperatorColor}"
                                  VerticalOptions="Fill" HorizontalOptions="Fill" />
                 </Grid>
-                <StackLayout Margin="20" HeightRequest="{StaticResource ButtonHeightRequest}" VerticalOptions="Center">
+                
+                
+                <StackLayout Margin="20" HeightRequest="{StaticResource ButtonHeightRequest}" VerticalOptions="Center" >
                     <ActivityIndicator IsRunning="True"
                                        IsVisible="{Binding IsUiEnabled, Converter={StaticResource InverseBooleanConverter}}" />
                     <Button Text="Create Account"

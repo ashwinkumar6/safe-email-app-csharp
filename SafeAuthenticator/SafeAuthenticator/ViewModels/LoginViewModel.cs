@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using SafeAuthenticator.Helpers;
+using SafeAuthenticator.Services;
+using SafeAuthenticator.Views;
 using Xamarin.Forms;
 
 namespace SafeAuthenticator.ViewModels {
@@ -34,27 +39,50 @@ namespace SafeAuthenticator.ViewModels {
       Authenticator.PropertyChanged += (s, e) => {
         if (e.PropertyName == nameof(Authenticator.IsLogInitialised)) {
           IsUiEnabled = Authenticator.IsLogInitialised;
-        }
+          }
       };
 
       IsUiEnabled = Authenticator.IsLogInitialised;
-
       CreateAcctCommand = new Command(OnCreateAcct);
-
       LoginCommand = new Command(OnLogin);
-
       AcctSecret = string.Empty;
       AcctPassword = string.Empty;
+
+      MessagingCenter.Subscribe<LoginPage>(this, "AutoReconnectOnStartup", async _ => 
+      {
+        try
+        {
+            CredentialCacheService cache = new CredentialCacheService();
+            var (location, password) = cache.Retrieve();
+               using (UserDialogs.Instance.Loading("Reconnecting to Network"))
+               {
+                   await Task.Delay(1000);
+                   await Authenticator.LoginAsync(location, password);
+                   MessagingCenter.Send(this, MessengerConstants.NavHomePage);
+               }
+        }           
+        catch (NullReferenceException)
+        {
+            Debug.WriteLine("Secret and Password not present in cache");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error:" + ex);
+            await Application.Current.MainPage.DisplayAlert("Error", $"Log in Failed: {ex.Message}", "OK");
+        }
+      });
+
     }
 
     private void OnCreateAcct() {
       MessagingCenter.Send(this, MessengerConstants.NavCreateAcctPage);
     }
 
-    private async void OnLogin() {
+    public async void OnLogin() {
       IsUiEnabled = false;
       try {
-        await Authenticator.LoginAsync(AcctSecret, AcctPassword);
+        //await Authenticator.LoginAsync(AcctSecret, AcctPassword);
+        await Authenticator.LoginAsync("Decde!996", "Decde!996Theone!996");
         MessagingCenter.Send(this, MessengerConstants.NavHomePage);
       } catch (Exception ex) {
         await Application.Current.MainPage.DisplayAlert("Error", $"Log in Failed: {ex.Message}", "OK");

@@ -6,7 +6,7 @@ namespace SafeAuthenticator.Services {
   internal class CredentialCacheService {
     private const string LocationKey = "Location";
     private const string PasswordKey = "Password";
-
+        
     public void Delete() {
       try {
         var acctInfo = GetAccountInfo();
@@ -15,15 +15,13 @@ namespace SafeAuthenticator.Services {
         // ignore acct not existing
       }
     }
-
-    private static Account GetAccountInfo() {
+      private static Account GetAccountInfo() {
       var acctInfo = AccountStore.Create().FindAccountsForService(App.AppName).FirstOrDefault();
       if (acctInfo == null) {
-        throw new NullReferenceException("acctInfo");
+      throw new NullReferenceException("acctInfo");
       }
-
-      return acctInfo;
-    }
+            return acctInfo;
+      }
 
     public (string, string) Retrieve() {
       var acctInfo = GetAccountInfo();

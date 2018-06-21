@@ -21,8 +21,20 @@ namespace SafeAuthenticator.Services {
     private Authenticator _authenticator;
     private bool _isLogInitialised;
     internal bool IsLogInitialised { get => _isLogInitialised; private set => SetProperty(ref _isLogInitialised, value); }
-
     private CredentialCacheService CredentialCache { get; }
+
+//internal string SecretStrengthIndicator
+//        {
+//            get
+//            {
+//                var result = LoginStrength("sasd","");
+//                return SecretStrengthIndicator;
+//            }
+//            set
+//            {
+//                SecretStrengthIndicator = value;
+//            }
+//        }
 
     internal bool AuthReconnect {
       get {
@@ -115,9 +127,19 @@ namespace SafeAuthenticator.Services {
 
     public async Task HandleUrlActivationAsync(string encodedUri) {
       try {
-        if (_authenticator == null) {
+        if (_authenticator == null) {   
+          App.PermissionReqBeforeLogin = true;
+          App.PermissionReqBeforeLoginUri = encodedUri;
+          try {
+               var (location, password) = CredentialCache.Retrieve(); //if secret,password or not present we display alert
+              }
+          catch (NullReferenceException)
+              {
+               await Application.Current.MainPage.DisplayAlert("Error", "Need to be logged in to accept app requests", "OK");             
+              }
           return;
-        }
+          }
+                
 
         await CheckAndReconnect();
         var encodedReq = UrlFormat.GetRequestData(encodedUri);
@@ -138,16 +160,19 @@ namespace SafeAuthenticator.Services {
         } else if (decodedType == typeof(IpcReqError)) {
           var error = decodeResult as IpcReqError;
           await Application.Current.MainPage.DisplayAlert("Auth Request", $"Error: {error?.Description}", "Ok");
-        } else {
-          Debug.WriteLine("Decoded Req is not Auth Req");
+        } else
+        {
+            Debug.WriteLine("Decoded Req is not Auth Req");
         }
       } catch (Exception ex) {
-        var errorMsg = ex.Message;
-        if (ex is ArgumentNullException) {
-          errorMsg = "Ignoring Auth Request: Need to be logged in to accept app requests.";
-        }
+        //var errorMsg = ex.Message;
+        //if (ex is ArgumentNullException) {
+        //  errorMsg = "Ignoring Auth Request: Need to be logged in to accept app requests.";
+        //}
+        // some other error
+        //await Application.Current.MainPage.DisplayAlert("Error", errorMsg, "OK");
+        System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
 
-        await Application.Current.MainPage.DisplayAlert("Error", errorMsg, "OK");
       }
     }
 
@@ -186,5 +211,30 @@ namespace SafeAuthenticator.Services {
           await CheckAndReconnect();
         });
     }
-  }
+        
+        public (double, string) LoginStrength(string data)
+        {
+            //string Strength=null;
+            //var estimator = new ZxcvbnEstimator();
+            //var result = estimator.EstimateStrength(data);
+            //var calc = Math.Log(result.Guesses) / Math.Log(10);
+            //if (calc <= 4) { Strength = "VERY_WEAK"; }
+            //else if (calc <= 8) { Strength = "WEAK"; }
+            //else if (calc <= 10) { Strength = "SOMEWHAT_SECURE"; }
+            //else if (calc > 10) { Strength = "SECURE"; }
+
+
+            //double percentage = Math.Round(Math.Min((calc / 16) * 100, 100));
+            ////Console.WriteLine("Password strength " + allowed + "%");
+            //return (percentage, Strength);
+            var result= ZxcvbnLib.BindingZxcvbn.LoginStrength("Decde!996");
+            return result;
+        }
+
+
+
+
+
+
+    }
 }
