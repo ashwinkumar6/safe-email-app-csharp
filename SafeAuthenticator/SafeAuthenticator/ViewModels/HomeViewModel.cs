@@ -31,7 +31,7 @@ namespace SafeAuthenticator.ViewModels {
       MessagingCenter.Send(this, MessengerConstants.NavAppInfoPage, appModelInfo);
     }
 
-    private async void OnLogout() {
+    private async void OnLogout(){
       await Authenticator.LogoutAsync();
       MessagingCenter.Send(this, MessengerConstants.NavLoginPage);
     }
@@ -48,6 +48,15 @@ namespace SafeAuthenticator.ViewModels {
       } catch (Exception ex) {
         await Application.Current.MainPage.DisplayAlert("Error", $"Refresh Accounts Failed: {ex.Message}", "OK");
       }
+    }
+
+    public async void PermissionReq()
+    {
+      if (string.IsNullOrEmpty(Authenticator.PermissionReqBeforeLoginUri)) {
+        return;
+      }
+      await Authenticator.HandleUrlActivationAsync(Authenticator.PermissionReqBeforeLoginUri);
+      Authenticator.PermissionReqBeforeLoginUri = null;
     }
   }
 }

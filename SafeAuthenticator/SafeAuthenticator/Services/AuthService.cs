@@ -21,6 +21,7 @@ namespace SafeAuthenticator.Services {
     private Authenticator _authenticator;
     private bool _isLogInitialised;
     internal bool IsLogInitialised { get => _isLogInitialised; private set => SetProperty(ref _isLogInitialised, value); }
+    public string PermissionReqBeforeLoginUri;
 
     private CredentialCacheService CredentialCache { get; }
 
@@ -101,6 +102,7 @@ namespace SafeAuthenticator.Services {
 
     public void FreeState() {
       _authenticator?.Dispose();
+      _authenticator = null;
     }
 
     internal async Task<(int, int)> GetAccountInfoAsync() {
@@ -116,6 +118,10 @@ namespace SafeAuthenticator.Services {
     public async Task HandleUrlActivationAsync(string encodedUri) {
       try {
         if (_authenticator == null) {
+          PermissionReqBeforeLoginUri = encodedUri;
+          if (!AuthReconnect) {
+            await Application.Current.MainPage.DisplayAlert("Error", "Need to be logged in to accept app requests", "OK");
+          }
           return;
         }
 
@@ -142,12 +148,7 @@ namespace SafeAuthenticator.Services {
           Debug.WriteLine("Decoded Req is not Auth Req");
         }
       } catch (Exception ex) {
-        var errorMsg = ex.Message;
-        if (ex is ArgumentNullException) {
-          errorMsg = "Ignoring Auth Request: Need to be logged in to accept app requests.";
-        }
-
-        await Application.Current.MainPage.DisplayAlert("Error", errorMsg, "OK");
+        Debug.WriteLine($"Error: {ex.Message}");
       }
     }
 
@@ -167,7 +168,7 @@ namespace SafeAuthenticator.Services {
     }
 
     internal async Task LogoutAsync() {
-      await Task.Run(() => { _authenticator.Dispose(); });
+      await Task.Run(() => { FreeState(); });
     }
 
     private void OnNetworkDisconnected(object obj, EventArgs args) {
