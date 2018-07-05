@@ -8,9 +8,16 @@ using Xamarin.Forms.Xaml;
 namespace SafeAuthenticator.Views {
   [XamlCompilation(XamlCompilationOptions.Compile)]
   public partial class LoginPage : ContentPage, ICleanup {
-    public LoginPage() {
-      InitializeComponent();
+      LoginViewModel loginViewModel = new LoginViewModel();
 
+      protected override void OnAppearing()
+      {
+          base.OnAppearing();
+          loginViewModel.AutoReconnectOnStartup();
+      }
+      public LoginPage() {
+      InitializeComponent();
+      BindingContext = loginViewModel;
       MessagingCenter.Subscribe<LoginViewModel>(
         this,
         MessengerConstants.NavHomePage,

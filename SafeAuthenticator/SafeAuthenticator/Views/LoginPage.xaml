@@ -4,9 +4,6 @@
              xmlns:viewModels="clr-namespace:SafeAuthenticator.ViewModels;assembly=SafeAuthenticator"
              xmlns:commonUtils="clr-namespace:CommonUtils;assembly=CommonUtils"
              x:Class="SafeAuthenticator.Views.LoginPage" Title="Login" IsEnabled="{Binding IsUiEnabled}">
-    <ContentPage.BindingContext>
-        <viewModels:LoginViewModel />
-    </ContentPage.BindingContext>
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Join" Command="{Binding CreateAcctCommand}" />
     </ContentPage.ToolbarItems>

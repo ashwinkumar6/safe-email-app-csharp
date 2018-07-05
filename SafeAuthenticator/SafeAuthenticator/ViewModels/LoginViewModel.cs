@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using SafeAuthenticator.Helpers;
 using Xamarin.Forms;
 
@@ -12,6 +14,23 @@ namespace SafeAuthenticator.ViewModels {
     public string AcctPassword { get => _acctPassword; set => SetProperty(ref _acctPassword, value); }
 
     public string AcctSecret { get => _acctSecret; set => SetProperty(ref _acctSecret, value); }
+
+    public async void AutoReconnectOnStartup()
+    {
+        if (AuthReconnect)
+        {
+            var (location, password) = Authenticator.InitiateAutoReconnet();
+            if (location != null && password != null)
+            {
+                using (UserDialogs.Instance.Loading("Reconnecting to Network"))
+                {
+                    await Task.Delay(1000);
+                    await Authenticator.LoginAsync(location, password);
+                    MessagingCenter.Send(this, MessengerConstants.NavHomePage);
+                } 
+            }
+        }
+    }
 
     public ICommand CreateAcctCommand { get; }
 

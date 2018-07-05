@@ -35,10 +35,6 @@ namespace SafeAuthenticator.Services {
         return val == true;
       }
       set {
-        if (value == false) {
-          CredentialCache.Delete();
-        }
-
         Application.Current.Properties[AuthReconnectPropKey] = value;
       }
     }
@@ -168,7 +164,7 @@ namespace SafeAuthenticator.Services {
     }
 
     internal async Task LogoutAsync() {
-      await Task.Run(() => { FreeState(); });
+      await Task.Run(() => { FreeState(); CredentialCache.Delete(); });
     }
 
     private void OnNetworkDisconnected(object obj, EventArgs args) {
@@ -187,5 +183,17 @@ namespace SafeAuthenticator.Services {
           await CheckAndReconnect();
         });
     }
+
+        public (string,string) InitiateAutoReconnet()
+        {
+            try
+            {
+                var (location, password) = CredentialCache.Retrieve();
+                return (location, password);
+            }
+            catch (NullReferenceException){
+                return (null,null);
+            }  
+        }
   }
 }
