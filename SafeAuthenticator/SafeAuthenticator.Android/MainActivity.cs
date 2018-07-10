@@ -46,7 +46,10 @@ namespace SafeAuthenticator.Droid {
       base.OnBackPressed();
     }
 
+    
+
     protected override void OnCreate(Bundle bundle) {
+      Xamarin.Essentials.Platform.Init(this, bundle);
       TabLayoutResource = Resource.Layout.Tabbar;
       ToolbarResource = Resource.Layout.Toolbar;
 
@@ -67,7 +70,13 @@ namespace SafeAuthenticator.Droid {
       }
     }
 
-    protected override void OnNewIntent(Intent intent) {
+    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+    {
+        Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+        protected override void OnNewIntent(Intent intent) {
       base.OnNewIntent(intent);
       if (intent?.Data != null) {
         HandleAppLaunch(intent.Data.ToString());

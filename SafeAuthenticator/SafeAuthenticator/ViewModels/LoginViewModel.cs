@@ -19,7 +19,7 @@ namespace SafeAuthenticator.ViewModels {
     {
         if (AuthReconnect)
         {
-            var (location, password) = Authenticator.InitiateAutoReconnet();
+            var (location, password) = await Authenticator.InitiateAutoReconnet();
             if (location != null && password != null)
             {
                 using (UserDialogs.Instance.Loading("Reconnecting to Network"))
