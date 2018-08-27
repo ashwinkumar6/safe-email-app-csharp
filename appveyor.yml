@@ -19,4 +19,3 @@ environment:
   
  build_script:
  - msbuild %solution_name%
- 
